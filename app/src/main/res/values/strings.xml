@@ -19,4 +19,7 @@
     </string>
     <string name="your_stories_anywhere">Your Stories. Anywhere.</string>
     <string name="name">Stellar</string>
+    <string name="title_activity_register">Register</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 </resources>
