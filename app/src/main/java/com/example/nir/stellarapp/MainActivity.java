@@ -28,11 +28,11 @@ public class MainActivity extends AppCompatActivity {
 //                    mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_dashboard:
-                    viewPager.setCurrentItem(1);
+                    viewPager.setCurrentItem(2);
 //                    mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.navigation_notifications:
-                    viewPager.setCurrentItem(2);
+                    viewPager.setCurrentItem(1);
 //                    mTextMessage.setText(R.string.title_notifications);
                     return true;
             }
@@ -55,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         StatePagerAdapter adapter = new StatePagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new FragmentStories(), "Stories");
-//        adapter.addFragment(new FragmentStories(), "Stories");
-//        adapter.addFragment(new FragmentStories(), "Stories");
+        adapter.addFragment(new FragmentUser(), "User");
         viewPager.setAdapter(adapter);
     }
 
