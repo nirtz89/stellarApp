@@ -1,11 +1,14 @@
 package model;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Story {
     int storyId;
     int userId;
-    Post[] posts;
+    ArrayList<Post> posts;
 
-    public Story(int storyId, int userId, Post[] posts) {
+    public Story(int storyId, int userId, ArrayList<Post> posts) {
         this.storyId = storyId;
         this.userId = userId;
         this.posts = posts;
@@ -13,6 +16,10 @@ public class Story {
 
     public int getStoryId() {
         return storyId;
+    }
+
+    public Post getFirstPost() {
+        return posts.get(0);
     }
 
     public void setStoryId(int storyId) {
