@@ -1,5 +1,7 @@
 package com.example.nir.stellarapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -8,6 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.app.Activity;
+
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,12 +21,12 @@ public class MainActivity extends AppCompatActivity {
     private StatePagerAdapter mStatePagerAdapter;
     private ViewPager viewPager;
 
-
 //Roy Comment
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
+
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
@@ -28,7 +34,9 @@ public class MainActivity extends AppCompatActivity {
 //                    mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_dashboard:
-                    // TODO: Change activity to add
+                    Intent myIntent = new Intent(MainActivity.this, AddStoryActivity.class);
+                    //myIntent.putExtra("key", value); //Optional parameters
+                    MainActivity.this.startActivity(myIntent);
 //                    viewPager.setCurrentItem(2);
 //                    mTextMessage.setText(R.string.title_dashboard);
                     return true;
