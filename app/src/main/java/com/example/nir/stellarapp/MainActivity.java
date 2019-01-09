@@ -28,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
 //                    mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_dashboard:
-                    viewPager.setCurrentItem(2);
+                    // TODO: Change activity to add
+//                    viewPager.setCurrentItem(2);
 //                    mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.navigation_notifications:
