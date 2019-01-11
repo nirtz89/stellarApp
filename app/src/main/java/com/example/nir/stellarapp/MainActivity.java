@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private StatePagerAdapter mStatePagerAdapter;
     private ViewPager viewPager;
+    DatabaseHelper myDb;
 
 //Roy Comment
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -53,6 +54,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        myDb = new DatabaseHelper(this);
+        if (myDb.insertData(1,1)) {
+            Toast toast = Toast.makeText(this,"Success", Toast.LENGTH_LONG);
+            toast.show();
+        }
+        else {
+            Toast toast = Toast.makeText(this,"Failed", Toast.LENGTH_LONG);
+            toast.show();
+        }
 
         viewPager = findViewById(R.id.fragmentContainer);
         setupViewPager(viewPager);
