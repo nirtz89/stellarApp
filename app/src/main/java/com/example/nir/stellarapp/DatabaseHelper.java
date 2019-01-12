@@ -12,6 +12,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+
+import model.Post;
+import model.Story;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "stellar.db";
@@ -67,6 +71,61 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public int getLastStoryId() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select storyId from " + STORY_TABLE_NAME, null);
+        int ret = 0;
+        if (res.getCount() > 0) {
+            if (res.getCount() > 0) {
+                while (res.moveToNext()) {
+                    ret = res.getInt(0);
+                }
+            }
+        }
+        return ret;
+    }
+
+    public int getLastPostId() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select postId from " + POST_TABLE_NAME, null);
+        int ret = 0;
+        if (res.getCount() > 0) {
+            if (res.getCount() > 0) {
+                while (res.moveToNext()) {
+                    ret = res.getInt(0);
+                }
+            }
+        }
+        return ret;
+    }
+
+    public Boolean addStoryAndPostStub(Resources rcs) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int lastStoryRecord = this.getLastStoryId();
+        int lastPostRecord = this.getLastPostId();
+        ContentValues cvPost = new ContentValues();
+        ContentValues cvStory = new ContentValues();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Bitmap myImage = BitmapFactory.decodeResource(rcs, R.drawable.cat2);
+        myImage.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] photo = baos.toByteArray();
+
+        cvStory.put("storyId",lastStoryRecord+1);
+        cvStory.put("userId",1);
+
+        cvPost.put("postId",lastPostRecord+1);
+        cvPost.put("storyId",lastStoryRecord+1);
+        cvPost.put("img",photo);
+        cvPost.put("description","A string");
+        long resultStory = db.insert(STORY_TABLE_NAME, null, cvStory);
+        if (resultStory>0) {
+            long resultPost = db.insert(POST_TABLE_NAME, null, cvPost);
+            return resultPost>0;
+        }
+        return false;
+    }
+
     public String getAllPostDataString() {
         String toRet = "";
         SQLiteDatabase db = this.getWritableDatabase();
@@ -80,5 +139,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return toRet;
+    }
+
+    public ArrayList<Story> getAllFirstStories() {
+        ArrayList<Story> stories = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + POST_TABLE_NAME, null);
+        if (res.getCount() > 0) {
+            while (res.moveToNext()) {
+                Bitmap myImage = DbBitmapUtility.getImage(res.getBlob(2));
+                Post post = new Post(res.getInt(0),res.getInt(1), myImage, res.getString(3));
+                ArrayList<Post> posts = new ArrayList<>();
+                posts.add(post);
+                stories.add(new Story(res.getInt(1),1, posts));
+            }
+        }
+        return stories;
+    }
+
+    public Boolean removeAllTables() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + STORY_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + POST_TABLE_NAME);
+        db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER)");
+        db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
+        return true;
     }
 }

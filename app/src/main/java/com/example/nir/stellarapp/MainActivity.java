@@ -58,29 +58,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         myDb = new DatabaseHelper(this);
-        if (myDb.insertData(1,1)) {
-            Toast toast = Toast.makeText(this,"Success", Toast.LENGTH_LONG);
-            toast.show();
-        }
-        else {
-            Toast toast = Toast.makeText(this,"Failed", Toast.LENGTH_LONG);
-            toast.show();
-        }
-
-
-        Cursor res = myDb.getAllStoryData();
-        if (res.getCount() > 0) {
-            while (res.moveToNext()) {
-                Toast.makeText(this, "Story ID: "+ res.getString(0), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        if (myDb.insertPostData(1,1,"Hello",getResources())) {
-            Toast.makeText(this, "Post Inserted", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show();
-        }
 
         viewPager = findViewById(R.id.fragmentContainer);
         setupViewPager(viewPager);

@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -32,6 +33,8 @@ public class FragmentDb extends Fragment {
         view = inflater.inflate(R.layout.db_fragment, container, false);
 
         Button showPosts = view.findViewById(R.id.showPosts);
+        Button addStoryAndPost = view.findViewById(R.id.addStoryAndPost);
+        Button removeTables = view.findViewById(R.id.deleteTables);
         final Context ctx = this.getActivity();
 
         showPosts.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +52,33 @@ public class FragmentDb extends Fragment {
                             }
                         });
                 alertDialog.show();
+            }
+        });
+
+        addStoryAndPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseHelper myDb = new DatabaseHelper(ctx);
+                if (myDb.addStoryAndPostStub(ctx.getResources())) {
+                    Toast.makeText(ctx, "Success, story and post added.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(ctx, "ERROR", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        removeTables.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseHelper myDb = new DatabaseHelper(ctx);
+                if (myDb.removeAllTables()) {
+                    Toast.makeText(ctx, "Deleted all tables.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(ctx, "ERROR", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

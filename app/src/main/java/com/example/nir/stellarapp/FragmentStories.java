@@ -25,6 +25,7 @@ import model.Story;
 public class FragmentStories extends Fragment {
     private static final String TAG = "Stories";
     private TextView textView;
+    DatabaseHelper myDb;
 
     private ArrayList<Story> stories = new ArrayList<>();
     View view;
@@ -33,24 +34,9 @@ public class FragmentStories extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.stories_fragment, container, false);
+        myDb = new DatabaseHelper(this.getActivity());
 
-        Bitmap myImage = BitmapFactory.decodeResource(this.getActivity().getResources(), R.drawable.cat2);
-        Post story_1_post = new Post(1,1, myImage, "Look at my cats!");
-        ArrayList<Post> posts = new ArrayList<>();
-        posts.add(story_1_post);
-        stories.add(new Story(1,1, posts));
-
-        Bitmap myImage1 = BitmapFactory.decodeResource(this.getActivity().getResources(), R.drawable.dog2);
-        Post story_1_post1 = new Post(2,2, myImage1, "My dogs collection!");
-        ArrayList<Post> posts1 = new ArrayList<>();
-        posts1.add(story_1_post1);
-        stories.add(new Story(2,2, posts1));
-
-        Bitmap myImage2 = BitmapFactory.decodeResource(this.getActivity().getResources(), R.drawable.pancakes2);
-        Post story_1_post2 = new Post(2,2, myImage2, "I ❤️ Pancakes!");
-        ArrayList<Post> posts2 = new ArrayList<>();
-        posts2.add(story_1_post2);
-        stories.add(new Story(2,2, posts2));
+        stories = myDb.getAllFirstStories();
 
         initRecyclerView();
         return view;
