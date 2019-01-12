@@ -16,4 +16,9 @@
         android:icon="@drawable/ic_user_black"
         android:title="@string/user" />
 
+    <item
+        android:id="@+id/navigation_db"
+        android:icon="@drawable/ic_db"
+        android:title="@string/database" />
+
 </menu>

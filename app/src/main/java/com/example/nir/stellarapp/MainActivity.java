@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     viewPager.setCurrentItem(0);
-//                    mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_dashboard:
                     Intent myIntent = new Intent(MainActivity.this, AddStoryActivity.class);
@@ -44,7 +43,9 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_notifications:
                     viewPager.setCurrentItem(1);
-//                    mTextMessage.setText(R.string.title_notifications);
+                    return true;
+                case R.id.navigation_db:
+                    viewPager.setCurrentItem(2);
                     return true;
             }
             return false;
@@ -74,9 +75,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        if (myDb.insertPostData(1,1,"Hello",getResources())) {
+            Toast.makeText(this, "Post Inserted", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show();
+        }
+
         viewPager = findViewById(R.id.fragmentContainer);
         setupViewPager(viewPager);
-//        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
@@ -85,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         StatePagerAdapter adapter = new StatePagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new FragmentStories(), "Stories");
         adapter.addFragment(new FragmentUser(), "User");
+        adapter.addFragment(new FragmentDb(), "DB");
         viewPager.setAdapter(adapter);
     }
 
