@@ -2,6 +2,7 @@ package com.example.nir.stellarapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -33,6 +34,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("storyId",storyId);
         cv.put("userId",storyId);
         long result = db.insert(STORY_TABLE_NAME, null, cv);
-        return result<0;
+        return result>0;
+    }
+
+    public Cursor getAllStoryData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + STORY_TABLE_NAME, null);
+        return res;
+    }
+
+    public Cursor getAllPostsData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + POST_TABLE_NAME, null);
+        return res;
     }
 }

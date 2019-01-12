@@ -2,6 +2,7 @@ package com.example.nir.stellarapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -63,6 +64,14 @@ public class MainActivity extends AppCompatActivity {
         else {
             Toast toast = Toast.makeText(this,"Failed", Toast.LENGTH_LONG);
             toast.show();
+        }
+
+
+        Cursor res = myDb.getAllStoryData();
+        if (res.getCount() > 0) {
+            while (res.moveToNext()) {
+                Toast.makeText(this, "Story ID: "+ res.getString(0), Toast.LENGTH_SHORT).show();
+            }
         }
 
         viewPager = findViewById(R.id.fragmentContainer);
