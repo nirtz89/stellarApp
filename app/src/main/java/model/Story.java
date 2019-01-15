@@ -29,4 +29,8 @@ public class Story {
     public int getUserId() {
         return userId;
     }
+
+    public int getNumOfPosts() {
+        return this.posts.size();
+    }
 }

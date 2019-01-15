@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Random;
 
 import model.Post;
 import model.Story;
@@ -99,6 +100,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ret;
     }
 
+    public Boolean addStory(ArrayList<Post> posts, int userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put("userId",userId);
+        long resultStory = db.insert(STORY_TABLE_NAME, null, cv);
+
+        if (resultStory>-1) {
+            int currentStoryId = this.getLastStoryId();
+            for (Post p : posts) {
+                if (!this.addPost(currentStoryId,0,p.getImage(),p.getDesc())) {
+                    break;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public Boolean addPost(int storyId, int postId, Bitmap img, String desc) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] photo = baos.toByteArray();
+
+        cv.put("storyId",storyId);
+        cv.put("img",photo);
+        cv.put("description",desc);
+        long resultPost = db.insert(POST_TABLE_NAME, null, cv);
+
+        return resultPost>-1;
+    }
+
     public Boolean addStoryAndPostStub(Resources rcs) {
         SQLiteDatabase db = this.getWritableDatabase();
         int lastStoryRecord = this.getLastStoryId();
@@ -107,7 +143,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cvStory = new ContentValues();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Bitmap myImage = BitmapFactory.decodeResource(rcs, R.drawable.cat2);
+
+        Random rand = new Random();
+        int n = rand.nextInt(3) + 1;
+
+        Bitmap myImage;
+
+        switch (n) {
+            case 1:
+                myImage = BitmapFactory.decodeResource(rcs, R.drawable.dog2);
+                break;
+            case 2:
+                myImage = BitmapFactory.decodeResource(rcs, R.drawable.cat2);
+                break;
+            default:
+                myImage = BitmapFactory.decodeResource(rcs, R.drawable.pancakes2);
+                break;
+        }
+
         myImage.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] photo = baos.toByteArray();
 
@@ -139,6 +192,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return toRet;
+    }
+
+    public Story getStoryAndPostsByStoryId(int storyId) {
+        Story story = null;
+        ArrayList<Post> posts = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + STORY_TABLE_NAME + " where storyId = " + storyId, null);
+        if (res.getCount() > 0) {
+            while (res.moveToNext()) {
+                story = new Story(res.getInt(0),res.getInt(1),posts);
+            }
+        }
+
+        Cursor res2 = db.rawQuery("select * from " + POST_TABLE_NAME + " where storyId = " + storyId, null);
+        if (res2.getCount() > 0) {
+            while (res2.moveToNext()) {
+                Bitmap myImage = DbBitmapUtility.getImage(res2.getBlob(2));
+                Post post = new Post(res2.getInt(0),res2.getInt(1),myImage,res2.getString(3));
+                posts.add(post);
+            }
+        }
+        return story;
     }
 
     public ArrayList<Story> getAllFirstStories() {

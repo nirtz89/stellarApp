@@ -1,6 +1,7 @@
 package com.example.nir.stellarapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -44,11 +45,13 @@ public class StoryReyclerViewAdapter extends RecyclerView.Adapter<StoryReyclerVi
         final Post post = stories.get(position).getFirstPost();
         holder.txt.setText(post.getDesc());
         holder.imgView.setImageBitmap(post.getImage());
-        holder.txt.setOnClickListener(new View.OnClickListener() {
+        holder.comprised.setText("Comprised of " + stories.get(position).getNumOfPosts() + " tellings");
+        holder.frameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(mContext, post.getDesc(), Toast.LENGTH_LONG);
-                toast.show();
+                Intent myIntent = new Intent(mContext, StoryActivity.class);
+                myIntent.putExtra("storyId", ""+post.getStoryId());
+                mContext.startActivity(myIntent);
             }
         });
     }
@@ -62,11 +65,13 @@ public class StoryReyclerViewAdapter extends RecyclerView.Adapter<StoryReyclerVi
 
         ImageView img;
         TextView txt;
+        TextView comprised;
         ImageView imgView;
         FrameLayout frameLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            comprised = itemView.findViewById(R.id.comprisedLabel);
             img = itemView.findViewById(R.id.imageView);
             txt = itemView.findViewById(R.id.textView8);
             imgView = itemView.findViewById(R.id.imgBackground);

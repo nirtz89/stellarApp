@@ -23,14 +23,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".Login" />
         <activity android:name=".Register" />
         <activity
             android:name=".AddStoryActivity"
             android:label="@string/title_activity_add_story"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".StoryActivity"
+            android:label="@string/title_activity_story"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
