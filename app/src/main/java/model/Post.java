@@ -19,7 +19,24 @@ public class Post {
         return posdId;
     }
 
+    public void setPosdId(int posdId) {
+        this.posdId = posdId;
+    }
+
+    public void setStoryId(int storyId) {
+        this.storyId = storyId;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
     public int getStoryId() {
+
         return storyId;
     }
 

@@ -26,6 +26,7 @@ public class FragmentStories extends Fragment {
     private static final String TAG = "Stories";
     private TextView textView;
     DatabaseHelper myDb;
+    TextView noStoriesTextView;
 
     private ArrayList<Story> stories = new ArrayList<>();
     View view;
@@ -35,8 +36,12 @@ public class FragmentStories extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.stories_fragment, container, false);
         myDb = new DatabaseHelper(this.getActivity());
-
+        noStoriesTextView = view.findViewById(R.id.noStoriesTextView);
         stories = myDb.getAllFirstStories();
+
+        if (stories.size()==0) {
+            noStoriesTextView.setVisibility(View.VISIBLE);
+        }
 
         initRecyclerView();
         return view;

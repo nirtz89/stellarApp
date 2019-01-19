@@ -33,4 +33,17 @@ public class Story {
     public int getNumOfPosts() {
         return this.posts.size();
     }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setPosts(ArrayList<Post> posts) {
+        this.posts = posts;
+    }
+
+    public ArrayList<Post> getPosts() {
+
+        return posts;
+    }
 }

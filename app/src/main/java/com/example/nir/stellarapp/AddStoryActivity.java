@@ -1,14 +1,26 @@
 package com.example.nir.stellarapp;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import model.Post;
@@ -16,7 +28,14 @@ import model.Story;
 
 public class AddStoryActivity extends AppCompatActivity {
 
-    int currentPost;
+    private int currentPost = 0;
+    private Story story;
+    public static final int PICK_IMAGE = 1;
+    ImageView imgBackground;
+    TextView postDesc;
+    Context ctx;
+    View btnNext;
+    View btnPrev;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,43 +43,145 @@ public class AddStoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_story);
 
         ArrayList<Post> posts = new ArrayList<>();
+        story = new Story(0,0,posts);
 
-        Button addPost1Btn = findViewById(R.id.button);
-        Button addPost2Btn = findViewById(R.id.button2);
-        Button addPost3Btn = findViewById(R.id.button3);
-        final ConstraintLayout post1 = findViewById(R.id.post1);
-        final ConstraintLayout post2 = findViewById(R.id.post2);
-        final ConstraintLayout post3 = findViewById(R.id.post3);
+        final Button post1Btn = findViewById(R.id.button);
+        final Button post2Btn = findViewById(R.id.button2);
+        final Button post3Btn = findViewById(R.id.button3);
+        btnNext = findViewById(R.id.btnNext);
+        btnPrev = findViewById(R.id.btnPrev);
+        imgBackground = findViewById(R.id.imgBackground);
+        postDesc = findViewById(R.id.postDesc);
+        ctx = this;
 
-        addPost1Btn.setOnClickListener(new View.OnClickListener() {
+        post1Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                post2.setVisibility(View.INVISIBLE);
-                post3.setVisibility(View.INVISIBLE);
-                post1.setVisibility(View.VISIBLE);
                 currentPost = 0;
+                Intent galleryIntent = new Intent(
+                        Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent , PICK_IMAGE );
+                if(currentPost >= story.getPosts().size()){
+                    story.getPosts().add(new Post(0,0,null,""));
+                }else{
+                    // index exists
+                }
+                post2Btn.setAlpha(1.0f);
             }
         });
 
-        addPost2Btn.setOnClickListener(new View.OnClickListener() {
+        post2Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                post1.setVisibility(View.INVISIBLE);
-                post3.setVisibility(View.INVISIBLE);
-                post2.setVisibility(View.VISIBLE);
                 currentPost = 1;
+                Intent galleryIntent = new Intent(
+                        Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent , PICK_IMAGE );
+                if(currentPost >= story.getPosts().size()){
+                    story.getPosts().add(new Post(0,0,null,""));
+                }else{
+                    // index exists
+                }
+                post3Btn.setAlpha(1.0f);
             }
         });
 
-        addPost3Btn.setOnClickListener(new View.OnClickListener() {
+        post3Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                post1.setVisibility(View.INVISIBLE);
-                post2.setVisibility(View.INVISIBLE);
-                post3.setVisibility(View.VISIBLE);
                 currentPost = 2;
+                Intent galleryIntent = new Intent(
+                        Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent , PICK_IMAGE );
+                if(currentPost >= story.getPosts().size()){
+                    story.getPosts().add(new Post(0,0,null,""));
+                }else{
+                    // index exists
+                }
             }
         });
+
+
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentPost+1==story.getNumOfPosts()) {
+                    currentPost = 0;
+                }
+                else {
+                    currentPost++;
+                }
+                changeCurrentPost(currentPost);
+            }
+        });
+
+        btnPrev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentPost-1==-1) {
+                    currentPost = story.getNumOfPosts()-1;
+                }
+                else {
+                    currentPost--;
+                }
+                changeCurrentPost(currentPost);
+            }
+        });
+
+        postDesc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText txtUrl = new EditText(ctx);
+                txtUrl.setHint("http://www.librarising.com/astrology/celebs/images2/QR/queenelizabethii.jpg");
+                AlertDialog dialog = new AlertDialog.Builder(ctx)
+                        .setTitle("Moustachify Link")
+                        .setMessage("Paste in the link of an image to moustachify!")
+                        .setView(txtUrl)
+                        .setPositiveButton("Moustachify", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String url = txtUrl.getText().toString();
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+    }
+
+    private void changeCurrentPost(int currentPost) {
+        imgBackground.setImageBitmap(story.getPosts().get(currentPost).getImage());
+        postDesc.setText(story.getPosts().get(currentPost).getDesc());
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case PICK_IMAGE :
+                if (null != data) {
+                    Uri imageUri = data.getData();
+                    try { //Getting the Bitmap from Gallery
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                        imgBackground.setImageBitmap(bitmap);
+                        story.getPosts().get(currentPost).setImage(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
     }
 
 }

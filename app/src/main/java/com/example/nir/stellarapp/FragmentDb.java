@@ -33,6 +33,7 @@ public class FragmentDb extends Fragment {
         view = inflater.inflate(R.layout.db_fragment, container, false);
 
         Button showPosts = view.findViewById(R.id.showPosts);
+        Button showStories = view.findViewById(R.id.showStories);
         Button addStoryAndPost = view.findViewById(R.id.addStoryAndPost);
         Button removeTables = view.findViewById(R.id.deleteTables);
         final Context ctx = this.getActivity();
@@ -44,6 +45,25 @@ public class FragmentDb extends Fragment {
                 alertDialog.setTitle("Showing all Posts");
                 DatabaseHelper myDb = new DatabaseHelper(ctx);
                 String allStories = myDb.getAllPostDataString();
+                alertDialog.setMessage(allStories);
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+        });
+
+
+        showStories.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog alertDialog = new AlertDialog.Builder(ctx).create();
+                alertDialog.setTitle("Showing all Stories");
+                DatabaseHelper myDb = new DatabaseHelper(ctx);
+                String allStories = myDb.getAllStoriesDataString();
                 alertDialog.setMessage(allStories);
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {

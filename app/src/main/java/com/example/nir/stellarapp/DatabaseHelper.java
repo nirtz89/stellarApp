@@ -29,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER)");
+        db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, userName TEXT, likes INTEGER)");
         db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
     }
 
@@ -135,12 +135,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return resultPost>-1;
     }
 
-    public Boolean addStoryAndPostStub(Resources rcs) {
+    public Boolean addPostStub(Resources rcs, int storyId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int lastStoryRecord = this.getLastStoryId();
         int lastPostRecord = this.getLastPostId();
         ContentValues cvPost = new ContentValues();
-        ContentValues cvStory = new ContentValues();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -164,17 +162,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         myImage.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] photo = baos.toByteArray();
 
+        cvPost.put("postId",lastPostRecord+1);
+        cvPost.put("storyId",storyId);
+        cvPost.put("img",photo);
+        cvPost.put("description","A string");
+
+        long resultPost = db.insert(POST_TABLE_NAME, null, cvPost);
+        return resultPost>0;
+
+    }
+
+    public Boolean addStoryAndPostStub(Resources rcs) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int lastStoryRecord = this.getLastStoryId();
+        ContentValues cvStory = new ContentValues();
+
         cvStory.put("storyId",lastStoryRecord+1);
         cvStory.put("userId",1);
 
-        cvPost.put("postId",lastPostRecord+1);
-        cvPost.put("storyId",lastStoryRecord+1);
-        cvPost.put("img",photo);
-        cvPost.put("description","A string");
+        Random rand = new Random();
+        int num_posts = rand.nextInt(3) + 1;
+
         long resultStory = db.insert(STORY_TABLE_NAME, null, cvStory);
         if (resultStory>0) {
-            long resultPost = db.insert(POST_TABLE_NAME, null, cvPost);
-            return resultPost>0;
+            for (int i = 0; i < num_posts; i++) {
+                this.addPostStub(rcs, lastStoryRecord + 1);
+            }
+            return true;
         }
         return false;
     }
@@ -188,7 +202,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 toRet += "postId: " + res.getString(0) + "\n";
                 toRet += "storyId: " + res.getString(1) + "\n";
 //                toRet += "img: " + res.getString(2);
-                toRet += "text: " + res.getString(3);
+                toRet += "text: " + res.getString(3) + "\n\n";
             }
         }
         return toRet;
@@ -224,9 +238,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             while (res.moveToNext()) {
                 Bitmap myImage = DbBitmapUtility.getImage(res.getBlob(2));
                 Post post = new Post(res.getInt(0),res.getInt(1), myImage, res.getString(3));
-                ArrayList<Post> posts = new ArrayList<>();
-                posts.add(post);
-                stories.add(new Story(res.getInt(1),1, posts));
+                Boolean storyFound = false;
+                for (Story s : stories) {
+                    if (s.getStoryId() == res.getInt(1)) {
+                        storyFound = true;
+                        s.getPosts().add(post);
+                        break;
+                    }
+                }
+                if (!storyFound) {
+                    ArrayList<Post> posts = new ArrayList<>();
+                    posts.add(post);
+                    stories.add(new Story(res.getInt(1), 1, posts));
+                }
             }
         }
         return stories;
@@ -236,8 +260,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + STORY_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + POST_TABLE_NAME);
-        db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER)");
+        db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, userName TEXT, likes INTEGER)");
         db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
         return true;
+    }
+
+    public String getAllStoriesDataString() {
+        String toRet = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + STORY_TABLE_NAME, null);
+        if (res.getCount() > 0) {
+            while (res.moveToNext()) {
+                toRet += "storyId: " + res.getString(0) + "\n";
+                toRet += "userId: " + res.getString(1) + "\n\n\n";
+            }
+        }
+        return toRet;
     }
 }
