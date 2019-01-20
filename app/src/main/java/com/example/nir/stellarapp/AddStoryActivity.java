@@ -36,23 +36,38 @@ public class AddStoryActivity extends AppCompatActivity {
     Context ctx;
     View btnNext;
     View btnPrev;
+    DatabaseHelper myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_story);
 
+        myDb = new DatabaseHelper(this);
         ArrayList<Post> posts = new ArrayList<>();
         story = new Story(0,0,posts);
 
         final Button post1Btn = findViewById(R.id.button);
         final Button post2Btn = findViewById(R.id.button2);
         final Button post3Btn = findViewById(R.id.button3);
+        Button btnAddStory = findViewById(R.id.postBtn);
         btnNext = findViewById(R.id.btnNext);
         btnPrev = findViewById(R.id.btnPrev);
         imgBackground = findViewById(R.id.imgBackground);
         postDesc = findViewById(R.id.postDesc);
         ctx = this;
+
+        btnAddStory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (myDb.addStory(story.getPosts(),1)) {
+                    Toast.makeText(ctx, "Story Added", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(ctx, "Failed to add story", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         post1Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +78,7 @@ public class AddStoryActivity extends AppCompatActivity {
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent , PICK_IMAGE );
                 if(currentPost >= story.getPosts().size()){
-                    story.getPosts().add(new Post(0,0,null,""));
+                    story.getPosts().add(new Post(0,0,null,"Click here to change this post text"));
                 }else{
                     // index exists
                 }
@@ -80,7 +95,7 @@ public class AddStoryActivity extends AppCompatActivity {
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent , PICK_IMAGE );
                 if(currentPost >= story.getPosts().size()){
-                    story.getPosts().add(new Post(0,0,null,""));
+                    story.getPosts().add(new Post(0,0,null,"Click here to change this post text"));
                 }else{
                     // index exists
                 }
@@ -97,7 +112,7 @@ public class AddStoryActivity extends AppCompatActivity {
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent , PICK_IMAGE );
                 if(currentPost >= story.getPosts().size()){
-                    story.getPosts().add(new Post(0,0,null,""));
+                    story.getPosts().add(new Post(0,0,null,"Click here to change this post text"));
                 }else{
                     // index exists
                 }
@@ -137,12 +152,14 @@ public class AddStoryActivity extends AppCompatActivity {
                 final EditText txtUrl = new EditText(ctx);
                 txtUrl.setHint("http://www.librarising.com/astrology/celebs/images2/QR/queenelizabethii.jpg");
                 AlertDialog dialog = new AlertDialog.Builder(ctx)
-                        .setTitle("Moustachify Link")
-                        .setMessage("Paste in the link of an image to moustachify!")
+                        .setTitle("Post " + currentPost+1 + " text")
+                        .setMessage("Add text to your post")
                         .setView(txtUrl)
-                        .setPositiveButton("Moustachify", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                String url = txtUrl.getText().toString();
+                                String selectedText = txtUrl.getText().toString();
+                                story.getPosts().get(currentPost).setDesc(selectedText);
+                                postDesc.setText(selectedText) ;
                                 dialog.dismiss();
                             }
                         })

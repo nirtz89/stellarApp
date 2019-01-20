@@ -85,6 +85,12 @@
                     android:alpha="0.5"
                     android:text="Post 3" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/postBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Story" />
         </LinearLayout>
 
     </LinearLayout>

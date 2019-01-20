@@ -111,12 +111,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             int currentStoryId = this.getLastStoryId();
             for (Post p : posts) {
                 if (!this.addPost(currentStoryId,0,p.getImage(),p.getDesc())) {
-                    break;
+                    return false;
                 }
             }
         }
 
-        return false;
+        return true;
     }
 
     public Boolean addPost(int storyId, int postId, Bitmap img, String desc) {
@@ -124,7 +124,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        img.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        img.compress(Bitmap.CompressFormat.JPEG, 50, baos);
         byte[] photo = baos.toByteArray();
 
         cv.put("storyId",storyId);
