@@ -7,11 +7,6 @@
         android:title="@string/explore" />
 
     <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_add"
-        android:title="@string/add_story" />
-
-    <item
         android:id="@+id/navigation_notifications"
         android:icon="@drawable/ic_user_black"
         android:title="@string/user" />

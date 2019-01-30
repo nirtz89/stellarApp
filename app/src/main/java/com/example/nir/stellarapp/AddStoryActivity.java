@@ -3,7 +3,9 @@ package com.example.nir.stellarapp;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -46,6 +48,7 @@ public class AddStoryActivity extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         ArrayList<Post> posts = new ArrayList<>();
         story = new Story(0,0,posts);
+        story.getPosts().add(new Post(0,0,null,"Click here to change this post text"));
 
         final Button post1Btn = findViewById(R.id.button);
         final Button post2Btn = findViewById(R.id.button2);
@@ -77,12 +80,8 @@ public class AddStoryActivity extends AppCompatActivity {
                         Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent , PICK_IMAGE );
-                if(currentPost >= story.getPosts().size()){
-                    story.getPosts().add(new Post(0,0,null,"Click here to change this post text"));
-                }else{
-                    // index exists
-                }
                 post2Btn.setAlpha(1.0f);
+                post2Btn.setEnabled(true);
             }
         });
 
@@ -96,10 +95,12 @@ public class AddStoryActivity extends AppCompatActivity {
                 startActivityForResult(galleryIntent , PICK_IMAGE );
                 if(currentPost >= story.getPosts().size()){
                     story.getPosts().add(new Post(0,0,null,"Click here to change this post text"));
+                    changeCurrentPost(1);
                 }else{
                     // index exists
                 }
                 post3Btn.setAlpha(1.0f);
+                post3Btn.setEnabled(true);
             }
         });
 
@@ -113,6 +114,7 @@ public class AddStoryActivity extends AppCompatActivity {
                 startActivityForResult(galleryIntent , PICK_IMAGE );
                 if(currentPost >= story.getPosts().size()){
                     story.getPosts().add(new Post(0,0,null,"Click here to change this post text"));
+                    changeCurrentPost(2);
                 }else{
                     // index exists
                 }
@@ -150,9 +152,8 @@ public class AddStoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final EditText txtUrl = new EditText(ctx);
-                txtUrl.setHint("http://www.librarising.com/astrology/celebs/images2/QR/queenelizabethii.jpg");
                 AlertDialog dialog = new AlertDialog.Builder(ctx)
-                        .setTitle("Post " + currentPost+1 + " text")
+                        .setTitle("Post " + (currentPost+1) + " text")
                         .setMessage("Add text to your post")
                         .setView(txtUrl)
                         .setPositiveButton("Add", new DialogInterface.OnClickListener() {

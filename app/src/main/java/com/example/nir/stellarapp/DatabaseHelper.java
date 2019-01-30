@@ -124,7 +124,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        img.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+        img.compress(Bitmap.CompressFormat.JPEG, 30, baos);
         byte[] photo = baos.toByteArray();
 
         cv.put("storyId",storyId);

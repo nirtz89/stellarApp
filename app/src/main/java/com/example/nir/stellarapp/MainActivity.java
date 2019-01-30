@@ -6,9 +6,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,13 +37,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_home:
                     viewPager.setCurrentItem(0);
                     return true;
-                case R.id.navigation_dashboard:
-                    Intent myIntent = new Intent(MainActivity.this, AddStoryActivity.class);
-                    //myIntent.putExtra("key", value); //Optional parameters
-                    MainActivity.this.startActivity(myIntent);
-//                    viewPager.setCurrentItem(2);
-//                    mTextMessage.setText(R.string.title_dashboard);
-                    return true;
                 case R.id.navigation_notifications:
                     viewPager.setCurrentItem(1);
                     return true;
@@ -53,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -63,6 +64,19 @@ public class MainActivity extends AppCompatActivity {
         setupViewPager(viewPager);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(MainActivity.this, AddStoryActivity.class);
+                //myIntent.putExtra("key", value); //Optional parameters
+                MainActivity.this.startActivity(myIntent);
+//                    viewPager.setCurrentItem(2);
+//                    mTextMessage.setText(R.string.title_dashboard);
+            }
+        });
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
