@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -22,6 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "stellar.db";
     public static final String STORY_TABLE_NAME = "story_table";
     public static final String POST_TABLE_NAME = "post_table";
+    public static final String SETTINGS_TABLE_NAME = "settings_table";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -31,12 +30,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, userName TEXT, likes INTEGER)");
         db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
+        db.execSQL("create table " + SETTINGS_TABLE_NAME + " (userId INTEGER PRIMARY KEY)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + STORY_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + POST_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + SETTINGS_TABLE_NAME);
         onCreate(db);
     }
 
@@ -256,12 +257,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return stories;
     }
 
+    public Boolean isUserLoggedIn() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select userId from " + SETTINGS_TABLE_NAME, null);
+        if (res.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean loginUser(int userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("userId",userId);
+
+        long resultPost = db.update(SETTINGS_TABLE_NAME, cv, null,null);
+        return resultPost>0;
+    }
+
     public Boolean removeAllTables() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + STORY_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + POST_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + SETTINGS_TABLE_NAME);
         db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, userName TEXT, likes INTEGER)");
         db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
+        db.execSQL("create table " + SETTINGS_TABLE_NAME + " (userId INTEGER PRIMARY KEY)");
         return true;
     }
 

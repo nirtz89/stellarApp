@@ -1,21 +1,16 @@
 package com.example.nir.stellarapp;
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.app.Activity;
 
 
 
@@ -60,6 +55,13 @@ public class MainActivity extends AppCompatActivity {
 
         myDb = new DatabaseHelper(this);
 
+        if (!myDb.isUserLoggedIn()) {
+            Intent myIntent = new Intent(MainActivity.this, Login.class);
+            myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            MainActivity.this.startActivity(myIntent);
+            finish();
+        }
+
         viewPager = findViewById(R.id.fragmentContainer);
         setupViewPager(viewPager);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -71,12 +73,23 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent myIntent = new Intent(MainActivity.this, AddStoryActivity.class);
                 //myIntent.putExtra("key", value); //Optional parameters
-                MainActivity.this.startActivity(myIntent);
+                MainActivity.this.startActivityForResult(myIntent, 1);
+
 //                    viewPager.setCurrentItem(2);
 //                    mTextMessage.setText(R.string.title_dashboard);
             }
         });
 
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK) {
+                String strEditText = data.getStringExtra("editTextValue");
+                Toast.makeText(this, strEditText, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void setupViewPager(ViewPager viewPager) {

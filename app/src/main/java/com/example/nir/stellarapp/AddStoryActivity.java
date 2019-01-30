@@ -3,18 +3,12 @@ package com.example.nir.stellarapp;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,6 +39,10 @@ public class AddStoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_story);
 
+        Intent intent = new Intent();
+        intent.putExtra("editTextValue", "value_here");
+        setResult(RESULT_OK, intent);
+
         myDb = new DatabaseHelper(this);
         ArrayList<Post> posts = new ArrayList<>();
         story = new Story(0,0,posts);
@@ -65,6 +63,7 @@ public class AddStoryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (myDb.addStory(story.getPosts(),1)) {
                     Toast.makeText(ctx, "Story Added", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
                 else {
                     Toast.makeText(ctx, "Failed to add story", Toast.LENGTH_SHORT).show();

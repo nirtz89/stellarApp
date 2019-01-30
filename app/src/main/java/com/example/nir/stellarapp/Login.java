@@ -2,24 +2,25 @@ package com.example.nir.stellarapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 public class Login extends AppCompatActivity {
 
     Context ctx = this;
+    DatabaseHelper myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide(); //<< this
         setContentView(R.layout.activity_login);
+
+        myDb = new DatabaseHelper(this);
 
         final Button signupBtn = findViewById(R.id.signUpBtn);
         final Button loginBtn = findViewById(R.id.loginBtn);
@@ -39,11 +40,14 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 // STUB
                 if (emailInput.getText().toString().equalsIgnoreCase("nir")) {
+                    if (myDb.loginUser(1)) {
+                        Toast.makeText(ctx, "SUCCESS LOGGING IN", Toast.LENGTH_SHORT).show();
+                    }
                     Intent intent = new Intent(ctx, MainActivity.class);
                     startActivity(intent);
                 }
                 else {
-                    Toast toast = Toast.makeText(ctx, "FAIL", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(ctx, "Login Failed. Username or password are incorrect.", Toast.LENGTH_LONG);
                     toast.show();
                 }
             }

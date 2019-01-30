@@ -31,4 +31,5 @@
     <string name="database">Database</string>
     <string name="title_activity_story">StoryActivity</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="no_stories_to_show">No stories to show 😞</string>
 </resources>
