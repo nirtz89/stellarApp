@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/generalnotitle"
+    android:background="@color/colorPrimary"
     tools:context=".Register">
 
     <LinearLayout
@@ -23,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Register to Stellar"
+            android:textColor="@android:color/white"
             android:textAlignment="center"
             android:textSize="25dp" />
 
@@ -38,6 +40,8 @@
             android:layout_marginRight="25dp"
             android:ems="10"
             android:hint="@string/email"
+            android:textColorHint="@color/colorAccent"
+            android:textColor="#FFFFFF"
             android:inputType="textPersonName" />
 
         <EditText
@@ -48,6 +52,8 @@
             android:layout_marginRight="25dp"
             android:ems="10"
             android:hint="@string/password"
+            android:textColorHint="@color/colorAccent"
+            android:textColor="#FFFFFF"
             android:inputType="textPassword" />
 
         <Space
@@ -61,6 +67,7 @@
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
             android:text="Favorite Category"
+            android:visibility="gone"
             android:textSize="15dp" />
 
         <Spinner
@@ -68,6 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"
+            android:visibility="gone"
             android:layout_marginRight="25dp" />
 
         <Button
@@ -76,6 +84,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
+            android:background="#FFFFFF"
+            android:minWidth="250dp"
+            android:textColor="@color/colorPrimary"
             android:text="Sign Up" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -21,6 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String STORY_TABLE_NAME = "story_table";
     public static final String POST_TABLE_NAME = "post_table";
     public static final String SETTINGS_TABLE_NAME = "settings_table";
+    public static final String USERS_TABLE_NAME = "users_table";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -31,6 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, userName TEXT, likes INTEGER)");
         db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
         db.execSQL("create table " + SETTINGS_TABLE_NAME + " (userId INTEGER PRIMARY KEY)");
+        db.execSQL("create table " + USERS_TABLE_NAME + " (userId INTEGER PRIMARY KEY, email TEXT, password TEXT, firstName TEXT, lastName TEXT, dob DATE, bio TEXT)");
     }
 
     @Override
@@ -271,7 +273,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("userId",userId);
 
-        long resultPost = db.update(SETTINGS_TABLE_NAME, cv, null,null);
+        Cursor res = db.rawQuery("select userId from " + SETTINGS_TABLE_NAME, null);
+        if (res.getCount() > 0) {
+            long resultPost = db.update(SETTINGS_TABLE_NAME, cv, null,null);
+            return resultPost>0;
+        }
+            long resultPost = db.insert(SETTINGS_TABLE_NAME, null,cv);
         return resultPost>0;
     }
 
@@ -280,9 +287,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + STORY_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + POST_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + SETTINGS_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE_NAME);
         db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, userName TEXT, likes INTEGER)");
         db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
         db.execSQL("create table " + SETTINGS_TABLE_NAME + " (userId INTEGER PRIMARY KEY)");
+        db.execSQL("create table " + USERS_TABLE_NAME + " (userId INTEGER PRIMARY KEY, email TEXT, password TEXT, firstName TEXT, lastName TEXT, dob DATE, bio TEXT)");
         return true;
     }
 
