@@ -32,7 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, userName TEXT, likes INTEGER)");
         db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
         db.execSQL("create table " + SETTINGS_TABLE_NAME + " (userId INTEGER PRIMARY KEY)");
-        db.execSQL("create table " + USERS_TABLE_NAME + " (userId INTEGER PRIMARY KEY, email TEXT, password TEXT, firstName TEXT, lastName TEXT, dob DATE, bio TEXT)");
+        db.execSQL("create table " + USERS_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, firstName TEXT, lastName TEXT, dob DATE, bio TEXT)");
     }
 
     @Override
@@ -260,12 +260,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Boolean isUserLoggedIn() {
+        Boolean toRet = false;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select userId from " + SETTINGS_TABLE_NAME, null);
         if (res.getCount() > 0) {
-            return true;
+            while (res.moveToNext()) {
+                if (res.getInt(0)!=-1) {
+                    toRet = true;
+                }
+            }
         }
-        return false;
+        return toRet;
     }
 
     public Boolean registerUser(String pwd, String email, String firstName, String lastName) {
@@ -275,19 +280,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("select userId from " + USERS_TABLE_NAME + " limit 0,1", null);
         int userLastId;
         if (res.getCount() > 0) {
-            userLastId = res.getInt(0);
-            userLastId++;
+            cv.putNull("userId");
         }
         else {
-            userLastId = 0;
+            cv.put("userId",1);
         }
-        cv.put("userId",userLastId);
         cv.put("password",pwd);
         cv.put("email",email);
         cv.put("firstName",firstName);
         cv.put("lastName",lastName);
+        cv.put("dob","");
+        cv.put("bio","");
         long resultPost = db.insert(USERS_TABLE_NAME, null,cv);
-        return resultPost>0;
+        return resultPost>-1;
     }
 
     public Boolean loginUser(int userId) {
@@ -313,7 +318,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, userName TEXT, likes INTEGER)");
         db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
         db.execSQL("create table " + SETTINGS_TABLE_NAME + " (userId INTEGER PRIMARY KEY)");
-        db.execSQL("create table " + USERS_TABLE_NAME + " (userId INTEGER PRIMARY KEY, email TEXT, password TEXT, firstName TEXT, lastName TEXT, dob DATE, bio TEXT)");
+        db.execSQL("create table " + USERS_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, firstName TEXT, lastName TEXT, dob DATE, bio TEXT)");
         return true;
     }
 
@@ -348,6 +353,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
         }
         return false;
+    }
+
+    public Boolean logout() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("userId",-1);
+
+        long resultPost = db.update(SETTINGS_TABLE_NAME, cv, null,null);
+        return resultPost>-1;
     }
 
     public String getAllUsers() {
