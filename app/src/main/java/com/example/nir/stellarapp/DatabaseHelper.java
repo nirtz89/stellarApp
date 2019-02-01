@@ -268,6 +268,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    public Boolean registerUser(String pwd, String email, String firstName, String lastName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        // Get latest userId
+        Cursor res = db.rawQuery("select userId from " + USERS_TABLE_NAME + " limit 0,1", null);
+        int userLastId;
+        if (res.getCount() > 0) {
+            userLastId = res.getInt(0);
+            userLastId++;
+        }
+        else {
+            userLastId = 0;
+        }
+        cv.put("userId",userLastId);
+        cv.put("password",pwd);
+        cv.put("email",email);
+        cv.put("firstName",firstName);
+        cv.put("lastName",lastName);
+        long resultPost = db.insert(USERS_TABLE_NAME, null,cv);
+        return resultPost>0;
+    }
+
     public Boolean loginUser(int userId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -303,6 +325,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             while (res.moveToNext()) {
                 toRet += "storyId: " + res.getString(0) + "\n";
                 toRet += "userId: " + res.getString(1) + "\n\n\n";
+            }
+        }
+        return toRet;
+    }
+
+    public String getAllUsers() {
+        String toRet = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + USERS_TABLE_NAME, null);
+        if (res.getCount() > 0) {
+            while (res.moveToNext()) {
+                toRet += "UserId: " + res.getString(0) + "\n";
+                toRet += "UserEmail: " + res.getString(1) + "\n";
+                toRet += "Password: " + res.getString(2) + "\n\n\n";
             }
         }
         return toRet;
