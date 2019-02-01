@@ -79,14 +79,14 @@
             android:layout_marginRight="25dp" />
 
         <Button
-            android:id="@+id/signupBtn"
+            android:id="@+id/registerBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
             android:background="#FFFFFF"
             android:minWidth="250dp"
-            android:textColor="@color/colorPrimary"
-            android:text="Sign Up" />
+            android:text="Sign Up"
+            android:textColor="@color/colorPrimary" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

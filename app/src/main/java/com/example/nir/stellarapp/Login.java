@@ -39,8 +39,9 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // STUB
-                if (emailInput.getText().toString().equalsIgnoreCase("nir")) {
-                    if (myDb.loginUser(1)) {
+                if (myDb.checkUserLogin(emailInput.getText().toString(),pwdInput.getText().toString())) {
+                    int userId = myDb.getUserIdByEmail(emailInput.getText().toString());
+                    if (myDb.loginUser(userId)) {
                         Toast.makeText(ctx, "SUCCESS LOGGING IN", Toast.LENGTH_SHORT).show();
                     }
                     Intent intent = new Intent(ctx, MainActivity.class);

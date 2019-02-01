@@ -330,6 +330,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return toRet;
     }
 
+    public int getUserIdByEmail(String email) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select userId from " + USERS_TABLE_NAME + " where email = '" + email + "'", null);
+        if (res.getCount() > 0) {
+            while (res.moveToNext()) {
+                return res.getInt(0);
+            }
+        }
+        return 0;
+    }
+
+    public Boolean checkUserLogin(String email, String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select userId from " + USERS_TABLE_NAME + " where email = '" + email + "' and password = '" + password + "'", null);
+        if (res.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public String getAllUsers() {
         String toRet = "";
         SQLiteDatabase db = this.getWritableDatabase();
