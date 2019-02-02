@@ -211,14 +211,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return toRet;
     }
 
+    public int getUserIdFromSettings() {
+        String toRet = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select userId from " + SETTINGS_TABLE_NAME, null);
+        if (res.getCount() > 0) {
+            while (res.moveToNext()) {
+                return res.getInt(0);
+            }
+        }
+        return -1;
+
+    }
+
     public Story getStoryAndPostsByStoryId(int storyId) {
         Story story = null;
         ArrayList<Post> posts = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + STORY_TABLE_NAME + " where storyId = " + storyId, null);
+        Cursor res = db.rawQuery("select " + STORY_TABLE_NAME + ".*, firstName, lastName from " + STORY_TABLE_NAME + " JOIN " + USERS_TABLE_NAME + " ON " + STORY_TABLE_NAME + ".userId = " + USERS_TABLE_NAME + ".userId where storyId = " + storyId, null);
         if (res.getCount() > 0) {
             while (res.moveToNext()) {
-                story = new Story(res.getInt(0),res.getInt(1),posts);
+                String fullUserName = res.getString(4) + " " + res.getString(5);
+                story = new Story(res.getInt(0),res.getInt(1),fullUserName,posts);
             }
         }
 
@@ -236,7 +250,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public ArrayList<Story> getAllFirstStories() {
         ArrayList<Story> stories = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + POST_TABLE_NAME, null);
+        Cursor res = db.rawQuery("select p.*, u.firstName, u.lastName from " + POST_TABLE_NAME + " as p JOIN " + STORY_TABLE_NAME + " as s ON p.storyId = s.storyId JOIN " + USERS_TABLE_NAME + " as u ON s.userId = u.userId", null);
         if (res.getCount() > 0) {
             while (res.moveToNext()) {
                 Bitmap myImage = DbBitmapUtility.getImage(res.getBlob(2));
@@ -252,7 +266,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 if (!storyFound) {
                     ArrayList<Post> posts = new ArrayList<>();
                     posts.add(post);
-                    stories.add(new Story(res.getInt(1), 1, posts));
+                    stories.add(new Story(res.getInt(1), 1, res.getString(4) + " " + res.getString(5), posts));
                 }
             }
         }
@@ -372,7 +386,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             while (res.moveToNext()) {
                 toRet += "UserId: " + res.getString(0) + "\n";
                 toRet += "UserEmail: " + res.getString(1) + "\n";
-                toRet += "Password: " + res.getString(2) + "\n\n\n";
+                toRet += "Password: " + res.getString(2) + "\n";
+                toRet += "First Name: " + res.getString(3) + "\n";
+                toRet += "Last Name: " + res.getString(4) + "\n\n\n";
             }
         }
         return toRet;

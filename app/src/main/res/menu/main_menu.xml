@@ -12,4 +12,10 @@
         app:showAsAction="never"
         />
 
+    <item android:id="@+id/db"
+        android:title="Database"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_db"
+        />
+
 </menu>

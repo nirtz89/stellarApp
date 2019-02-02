@@ -45,7 +45,7 @@ public class AddStoryActivity extends AppCompatActivity {
 
         myDb = new DatabaseHelper(this);
         ArrayList<Post> posts = new ArrayList<>();
-        story = new Story(0,0,posts);
+        story = new Story(0,0,"", posts);
         story.getPosts().add(new Post(0,0,null,"Click here to change this post text"));
 
         final Button post1Btn = findViewById(R.id.button);
@@ -61,7 +61,7 @@ public class AddStoryActivity extends AppCompatActivity {
         btnAddStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (myDb.addStory(story.getPosts(),1)) {
+                if (myDb.addStory(story.getPosts(),myDb.getUserIdFromSettings())) {
                     Toast.makeText(ctx, "Story Added", Toast.LENGTH_SHORT).show();
                     finish();
                 }

@@ -48,8 +48,10 @@ public class Login extends AppCompatActivity {
                     if (myDb.loginUser(userId)) {
                         Toast.makeText(ctx, "SUCCESS LOGGING IN", Toast.LENGTH_SHORT).show();
                     }
-                    Intent intent = new Intent(ctx, MainActivity.class);
-                    startActivity(intent);
+                    Intent myIntent = new Intent(ctx, MainActivity.class);
+                    myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    ctx.startActivity(myIntent);
+                    finish();
                 }
                 else {
                     Toast toast = Toast.makeText(ctx, "Login Failed. Username or password are incorrect.", Toast.LENGTH_LONG);

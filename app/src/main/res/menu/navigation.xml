@@ -13,7 +13,7 @@
 
     <item
         android:id="@+id/navigation_db"
-        android:icon="@drawable/ic_db"
-        android:title="@string/database" />
+        android:icon="@drawable/ic_search"
+        android:title="@string/search" />
 
 </menu>

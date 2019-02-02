@@ -46,6 +46,7 @@ public class StoryReyclerViewAdapter extends RecyclerView.Adapter<StoryReyclerVi
         holder.txt.setText(post.getDesc());
         holder.imgView.setImageBitmap(post.getImage());
         holder.comprised.setText("Comprised of " + stories.get(position).getNumOfPosts() + " tellings");
+        holder.uploadedBy.setText("As told by " + stories.get(position).getUserFullName());
         holder.frameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +69,7 @@ public class StoryReyclerViewAdapter extends RecyclerView.Adapter<StoryReyclerVi
         TextView comprised;
         ImageView imgView;
         FrameLayout frameLayout;
+        TextView uploadedBy;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -76,6 +78,7 @@ public class StoryReyclerViewAdapter extends RecyclerView.Adapter<StoryReyclerVi
             txt = itemView.findViewById(R.id.textView8);
             imgView = itemView.findViewById(R.id.imgBackground);
             frameLayout = itemView.findViewById(R.id.parentLayout);
+            uploadedBy = itemView.findViewById(R.id.uploadedBy);
 
         }
     }

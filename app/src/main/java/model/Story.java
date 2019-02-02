@@ -6,12 +6,14 @@ import java.util.ArrayList;
 public class Story {
     int storyId;
     int userId;
+    String userFullName;
     ArrayList<Post> posts;
 
-    public Story(int storyId, int userId, ArrayList<Post> posts) {
+    public Story(int storyId, int userId, String userFullName, ArrayList<Post> posts) {
         this.storyId = storyId;
         this.userId = userId;
         this.posts = posts;
+        this.userFullName = userFullName;
     }
 
     public int getStoryId() {
@@ -36,6 +38,15 @@ public class Story {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public void setUserFullName(String userFullName) {
+        this.userFullName = userFullName;
+    }
+
+    public String getUserFullName() {
+
+        return userFullName;
     }
 
     public void setPosts(ArrayList<Post> posts) {

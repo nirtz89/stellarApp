@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
                     viewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_db:
-                    viewPager.setCurrentItem(2);
+                    Toast.makeText(MainActivity.this, "Search clicked", Toast.LENGTH_SHORT).show();
                     return true;
             }
             return false;
@@ -71,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.about:
                 Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.db:
+                viewPager.setCurrentItem(2);
                 return true;
         }
         return super.onOptionsItemSelected(item);
