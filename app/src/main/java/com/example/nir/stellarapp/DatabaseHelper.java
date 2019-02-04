@@ -15,6 +15,7 @@ import java.util.Random;
 
 import model.Post;
 import model.Story;
+import model.User;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "stellar.db";
@@ -221,7 +222,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return -1;
+    }
 
+    public User getUserById(int userId) {
+        User user = null;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + SETTINGS_TABLE_NAME, null);
+        if (res.getCount() > 0) {
+            while (res.moveToNext()) {
+                user = new User(res.getInt(0),res.getString(1),res.getString(3),res.getString(4),res.getString(6),res.getString(5));
+            }
+            return user;
+        }
+        return null;
     }
 
     public Story getStoryAndPostsByStoryId(int storyId) {
@@ -392,5 +405,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return toRet;
+    }
+
+    public ArrayList<Story> getAllStoriesByUser(int userId) {
+        ArrayList<Story> stories = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select p.*, u.firstName, u.lastName from " + POST_TABLE_NAME + " as p JOIN " + STORY_TABLE_NAME + " as s ON p.storyId = s.storyId JOIN " + USERS_TABLE_NAME + " as u ON s.userId = u.userId WHERE u.userId = " + userId, null);
+        if (res.getCount() > 0) {
+            while (res.moveToNext()) {
+                Bitmap myImage = DbBitmapUtility.getImage(res.getBlob(2));
+                Post post = new Post(res.getInt(0),res.getInt(1), myImage, res.getString(3));
+                Boolean storyFound = false;
+                for (Story s : stories) {
+                    if (s.getStoryId() == res.getInt(1)) {
+                        storyFound = true;
+                        s.getPosts().add(post);
+                        break;
+                    }
+                }
+                if (!storyFound) {
+                    ArrayList<Post> posts = new ArrayList<>();
+                    posts.add(post);
+                    stories.add(new Story(res.getInt(1), 1, res.getString(4) + " " + res.getString(5), posts));
+                }
+            }
+        }
+        return stories;
+
     }
 }

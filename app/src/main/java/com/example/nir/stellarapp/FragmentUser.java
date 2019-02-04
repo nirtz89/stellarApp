@@ -24,6 +24,7 @@ public class FragmentUser extends Fragment {
 
     private ArrayList<Story> stories = new ArrayList<>();
     View view;
+    DatabaseHelper myDb;
 
     @Nullable
     @Override
@@ -31,24 +32,9 @@ public class FragmentUser extends Fragment {
         View view = inflater.inflate(R.layout.user_fragment, container, false);
         TextView username = view.findViewById(R.id.userName);
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView2);
+        myDb = new DatabaseHelper(this.getContext());
 
-        Bitmap myImage = BitmapFactory.decodeResource(this.getActivity().getResources(), R.drawable.cat2);
-        Post story_1_post = new Post(1,1, myImage, "Look at my cats!");
-        ArrayList<Post> posts = new ArrayList<>();
-        posts.add(story_1_post);
-        stories.add(new Story(1,1, "", posts));
-
-        Bitmap myImage1 = BitmapFactory.decodeResource(this.getActivity().getResources(), R.drawable.dog2);
-        Post story_1_post1 = new Post(2,2, myImage1, "My dogs collection!");
-        ArrayList<Post> posts1 = new ArrayList<>();
-        posts1.add(story_1_post1);
-        stories.add(new Story(2,2, "" ,posts1));
-
-        Bitmap myImage2 = BitmapFactory.decodeResource(this.getActivity().getResources(), R.drawable.pancakes2);
-        Post story_1_post2 = new Post(2,2, myImage2, "I ❤️ Pancakes!");
-        ArrayList<Post> posts2 = new ArrayList<>();
-        posts2.add(story_1_post2);
-        stories.add(new Story(2,2, "", posts2));
+        stories = myDb.getAllStoriesByUser(myDb.getUserIdFromSettings());
 
         StoryReyclerViewAdapter storyReyclerViewAdapter = new StoryReyclerViewAdapter(stories,this.getActivity());
         recyclerView.setAdapter(storyReyclerViewAdapter);
