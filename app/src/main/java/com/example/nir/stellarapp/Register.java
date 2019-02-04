@@ -37,7 +37,7 @@ public class Register extends AppCompatActivity {
                     finish();
                 }
                 else {
-
+                    Toast.makeText(ctx, "Register failed.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

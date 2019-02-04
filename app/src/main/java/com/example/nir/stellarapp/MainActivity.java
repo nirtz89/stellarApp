@@ -7,13 +7,13 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
                     viewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_db:
-                    Toast.makeText(MainActivity.this, "Search clicked", Toast.LENGTH_SHORT).show();
+                    viewPager.setCurrentItem(3);
                     return true;
             }
             return false;
@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new FragmentStories(), "Stories");
         adapter.addFragment(new FragmentUser(), "User");
         adapter.addFragment(new FragmentDb(), "DB");
+        adapter.addFragment(new FragmentSearch(), "Search");
         viewPager.setAdapter(adapter);
     }
 
