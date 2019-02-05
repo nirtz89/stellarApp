@@ -23,6 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String POST_TABLE_NAME = "post_table";
     public static final String SETTINGS_TABLE_NAME = "settings_table";
     public static final String USERS_TABLE_NAME = "users_table";
+    public static final String LIKES_TABLE_NAME = "likes_table";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -34,6 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
         db.execSQL("create table " + SETTINGS_TABLE_NAME + " (userId INTEGER PRIMARY KEY)");
         db.execSQL("create table " + USERS_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, firstName TEXT, lastName TEXT, dob DATE, bio TEXT)");
+        db.execSQL("create table " + LIKES_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER)");
     }
 
     @Override
@@ -239,6 +241,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return -1;
     }
 
+    public Boolean doesUserLikedStory(int storyId) {
+        String toRet = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        int userId = getUserIdFromSettings();
+        Cursor res = db.rawQuery("select userId from " + LIKES_TABLE_NAME + " where userId = " + userId + " and storyId = " + storyId, null);
+        return (res.getCount() > 0);
+    }
+
+    public int getNumberOfLikesForStory(int storyId) {
+        String toRet = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select count(1) from " + LIKES_TABLE_NAME + " where storyId = " + storyId, null);
+        if (res.getCount() > 0) {
+            while (res.moveToNext()) {
+                return res.getInt(0);
+            }
+        }
+        return 0;
+    }
+
     public User getUserById(int userId) {
         User user = null;
         SQLiteDatabase db = this.getWritableDatabase();
@@ -306,10 +328,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String findString = "";
 
         for (Integer storyId : storiesToGet) {
-            findString = findString += storyId +",";
+            findString += storyId +",";
         }
 
-        findString = findString.replace(findString.substring(findString.length()-1), "");
+        findString = findString.substring(0, findString.length() - 1);
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select p.*, u.firstName, u.lastName from " + POST_TABLE_NAME + " as p JOIN " + STORY_TABLE_NAME + " as s ON p.storyId = s.storyId JOIN " + USERS_TABLE_NAME + " as u ON s.userId = u.userId WHERE p.storyId IN (" + findString + ")", null);
@@ -391,10 +413,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + POST_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + SETTINGS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + LIKES_TABLE_NAME);
         db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, userName TEXT, likes INTEGER)");
         db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
         db.execSQL("create table " + SETTINGS_TABLE_NAME + " (userId INTEGER PRIMARY KEY)");
         db.execSQL("create table " + USERS_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, firstName TEXT, lastName TEXT, dob DATE, bio TEXT)");
+        db.execSQL("create table " + LIKES_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER)");
         return true;
     }
 
@@ -481,5 +505,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return stories;
 
+    }
+
+    public Boolean addLike(int storyId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        int userId = getUserIdFromSettings();
+        cv.put("storyId",storyId);
+        cv.put("userId",userId);
+        long result = db.insert(LIKES_TABLE_NAME, null, cv);
+        return result>0;
     }
 }

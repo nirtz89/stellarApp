@@ -15,16 +15,35 @@
         android:paddingRight="15dp"
         android:paddingBottom="15dp">
 
-        <EditText
-            android:id="@+id/searchTern"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Start typing your search term"
-            android:inputType="textPersonName"
-            android:text=""
-            android:textColor="@android:color/white"
-            android:textColorHint="@color/colorAccent" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/searchTern"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Type a search term"
+                android:inputType="textPersonName"
+                android:text=""
+                android:layout_weight="8"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/colorAccent" />
+
+            <ImageView
+                android:id="@+id/searchImageView"
+                android:layout_width="20dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_search_black" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

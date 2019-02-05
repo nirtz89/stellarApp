@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,7 +29,9 @@ public class StoryActivity extends AppCompatActivity {
     View post3Bar;
     ImageView img;
     int currentPost;
+    int storyId;
     Story story;
+    Button likeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +44,33 @@ public class StoryActivity extends AppCompatActivity {
         post1Bar = findViewById(R.id.post1Bar);
         post2Bar = findViewById(R.id.post2Bar);
         post3Bar = findViewById(R.id.post3Bar);
+        likeBtn = findViewById(R.id.likeBtn);
         img = findViewById(R.id.imgBackground);
         currentPost = 0;
 
         Intent intent = getIntent();
-        String storyId = intent.getStringExtra("storyId");
+        storyId = Integer.parseInt(intent.getStringExtra("storyId"));
         myDb = new DatabaseHelper(this);
-        story = myDb.getStoryAndPostsByStoryId(Integer.parseInt(storyId));
+        story = myDb.getStoryAndPostsByStoryId(storyId);
         Post post = story.getFirstPost();
+
+        postDesc.setText(post.getDesc());
+
+        if (myDb.doesUserLikedStory(storyId)) {
+            likeBtn.setEnabled(false);
+            likeBtn.setText("This story is already liked");
+        }
+
+        likeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (myDb.addLike(storyId)) {
+                    Toast.makeText(StoryActivity.this, "Story Liked!", Toast.LENGTH_SHORT).show();
+                    likeBtn.setEnabled(false);
+                    likeBtn.setText("This story is already liked");
+                }
+            }
+        });
 
         final int num_posts = story.getNumOfPosts()-1;
         switch (num_posts) {

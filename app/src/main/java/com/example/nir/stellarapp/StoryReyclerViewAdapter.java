@@ -26,10 +26,12 @@ public class StoryReyclerViewAdapter extends RecyclerView.Adapter<StoryReyclerVi
 
     private ArrayList<Story> stories = new ArrayList<>();
     private Context mContext;
+    private DatabaseHelper myDb;
 
     public StoryReyclerViewAdapter(ArrayList<Story> stories, Context mContext) {
         this.stories = stories;
         this.mContext = mContext;
+        myDb = new DatabaseHelper(mContext);
     }
 
     @NonNull
@@ -43,6 +45,8 @@ public class StoryReyclerViewAdapter extends RecyclerView.Adapter<StoryReyclerVi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Post post = stories.get(position).getFirstPost();
+        int likes = myDb.getNumberOfLikesForStory(post.getStoryId());
+        holder.likes.setText("| " + Integer.toString(likes) + " Likes");
         holder.txt.setText(post.getDesc());
         holder.imgView.setImageBitmap(post.getImage());
         holder.comprised.setText("Comprised of " + stories.get(position).getNumOfPosts() + " tellings");
@@ -70,6 +74,7 @@ public class StoryReyclerViewAdapter extends RecyclerView.Adapter<StoryReyclerVi
         ImageView imgView;
         FrameLayout frameLayout;
         TextView uploadedBy;
+        TextView likes;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +84,7 @@ public class StoryReyclerViewAdapter extends RecyclerView.Adapter<StoryReyclerVi
             imgView = itemView.findViewById(R.id.imgBackground);
             frameLayout = itemView.findViewById(R.id.parentLayout);
             uploadedBy = itemView.findViewById(R.id.uploadedBy);
+            likes = itemView.findViewById(R.id.likesView);
 
         }
     }

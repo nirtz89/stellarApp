@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -32,28 +33,20 @@ public class FragmentSearch extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.search_fragment, container, false);
 
-        EditText showPosts = view.findViewById(R.id.searchTern);
+        final EditText showPosts = view.findViewById(R.id.searchTern);
         final Context ctx = this.getActivity();
 
         myDb = new DatabaseHelper(this.getContext());
+        ImageView searchImageView = view.findViewById(R.id.searchImageView);
         recyclerView = view.findViewById(R.id.recyclerView);
         StoryReyclerViewAdapter storyReyclerViewAdapter = new StoryReyclerViewAdapter(stories,ctx);
         recyclerView.setAdapter(storyReyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
 
-        showPosts.addTextChangedListener(new TextWatcher() {
-
+        searchImageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void afterTextChanged(Editable s) {}
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
+            public void onClick(View v) {
+                String s = showPosts.getText().toString();
                 if(s.length() != 0) {
                     ArrayList found = myDb.getPostsByQuery(s.toString());
                     if (found.size()>0) {
@@ -64,7 +57,7 @@ public class FragmentSearch extends Fragment {
                     }
                 }
             }
-            });
+        });
 
         return view;
     }
