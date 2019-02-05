@@ -1,27 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        android:paddingBottom="15dp"
-        android:paddingTop="15dp"
+        android:orientation="vertical"
         android:paddingLeft="15dp"
+        android:paddingTop="15dp"
         android:paddingRight="15dp"
-        android:orientation="vertical">
+        android:paddingBottom="15dp">
 
         <EditText
             android:id="@+id/searchTern"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:hint="Start typing your search term"
             android:inputType="textPersonName"
-            android:textColor="@android:color/white"
             android:text=""
-            android:hint="Start typing your @string/search"
-            android:textColorHint="@color/colorAccent"/>
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/colorAccent" />
     </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 </android.support.constraint.ConstraintLayout>

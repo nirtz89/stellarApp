@@ -90,6 +90,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ret;
     }
 
+    public ArrayList getPostsByQuery(String term) {
+        ArrayList<Integer> stories = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select distinct storyId from " + POST_TABLE_NAME + " WHERE description LIKE '%" + term + "%'", null);
+        int ret = 0;
+        if (res.getCount() > 0) {
+            if (res.getCount() > 0) {
+                while (res.moveToNext()) {
+                    stories.add(res.getInt(0));
+                }
+            }
+        }
+        return stories;
+    }
+
     public int getLastPostId() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select postId from " + POST_TABLE_NAME, null);
@@ -264,6 +279,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ArrayList<Story> stories = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select p.*, u.firstName, u.lastName from " + POST_TABLE_NAME + " as p JOIN " + STORY_TABLE_NAME + " as s ON p.storyId = s.storyId JOIN " + USERS_TABLE_NAME + " as u ON s.userId = u.userId", null);
+        if (res.getCount() > 0) {
+            while (res.moveToNext()) {
+                Bitmap myImage = DbBitmapUtility.getImage(res.getBlob(2));
+                Post post = new Post(res.getInt(0),res.getInt(1), myImage, res.getString(3));
+                Boolean storyFound = false;
+                for (Story s : stories) {
+                    if (s.getStoryId() == res.getInt(1)) {
+                        storyFound = true;
+                        s.getPosts().add(post);
+                        break;
+                    }
+                }
+                if (!storyFound) {
+                    ArrayList<Post> posts = new ArrayList<>();
+                    posts.add(post);
+                    stories.add(new Story(res.getInt(1), 1, res.getString(4) + " " + res.getString(5), posts));
+                }
+            }
+        }
+        return stories;
+    }
+
+    public ArrayList<Story> getAllFirstStoriesByIds(ArrayList<Integer> storiesToGet) {
+        ArrayList<Story> stories = new ArrayList<>();
+        String findString = "";
+
+        for (Integer storyId : storiesToGet) {
+            findString = findString += storyId +",";
+        }
+
+        findString = findString.replace(findString.substring(findString.length()-1), "");
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select p.*, u.firstName, u.lastName from " + POST_TABLE_NAME + " as p JOIN " + STORY_TABLE_NAME + " as s ON p.storyId = s.storyId JOIN " + USERS_TABLE_NAME + " as u ON s.userId = u.userId WHERE p.storyId IN (" + findString + ")", null);
         if (res.getCount() > 0) {
             while (res.moveToNext()) {
                 Bitmap myImage = DbBitmapUtility.getImage(res.getBlob(2));
