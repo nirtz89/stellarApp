@@ -36,6 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + SETTINGS_TABLE_NAME + " (userId INTEGER PRIMARY KEY)");
         db.execSQL("create table " + USERS_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, firstName TEXT, lastName TEXT, dob DATE, bio TEXT)");
         db.execSQL("create table " + LIKES_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER)");
+        // STUBS
+        // addStubs();
     }
 
     @Override
@@ -46,11 +48,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void addStubs() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        // First we add users
+
+        cv.put("storyId",1);
+        cv.put("userId",1);
+        long result = db.insert(STORY_TABLE_NAME, null, cv);
+    }
+
     public boolean insertData(int storyId, int userId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("storyId",storyId);
-        cv.put("userId",storyId);
+        cv.put("userId",userId);
         long result = db.insert(STORY_TABLE_NAME, null, cv);
         return result>0;
     }

@@ -88,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         myDb = new DatabaseHelper(this);
 
+        myDb.removeAllTables();
+
         if (!myDb.isUserLoggedIn()) {
             Intent myIntent = new Intent(MainActivity.this, Login.class);
             myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
