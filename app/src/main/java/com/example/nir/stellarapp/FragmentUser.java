@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import model.Post;
 import model.Story;
+import model.User;
 
 public class FragmentUser extends Fragment {
     private TextView textView;
@@ -35,11 +36,17 @@ public class FragmentUser extends Fragment {
         myDb = new DatabaseHelper(this.getContext());
 
         stories = myDb.getAllStoriesByUser(myDb.getUserIdFromSettings());
+        User user = myDb.getUserById(myDb.getUserIdFromSettings());
+
+        TextView userName = view.findViewById(R.id.userName);
+        TextView userStoriesLabel = view.findViewById(R.id.userStoriesTextView);
+        userName.setText(user.getfName() + " " + user.getlName());
+        userStoriesLabel.setText(user.getfName() + "'s Stories");
+
 
         StoryReyclerViewAdapter storyReyclerViewAdapter = new StoryReyclerViewAdapter(stories,this.getActivity());
         recyclerView.setAdapter(storyReyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-//        initRecyclerView();
 
         return view;
     }

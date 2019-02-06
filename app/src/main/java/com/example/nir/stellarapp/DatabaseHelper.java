@@ -2,14 +2,17 @@ package com.example.nir.stellarapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -24,9 +27,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SETTINGS_TABLE_NAME = "settings_table";
     public static final String USERS_TABLE_NAME = "users_table";
     public static final String LIKES_TABLE_NAME = "likes_table";
+    public static Context ctx = null;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
+        this.ctx = context;
     }
 
     @Override
@@ -35,9 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
         db.execSQL("create table " + SETTINGS_TABLE_NAME + " (userId INTEGER PRIMARY KEY)");
         db.execSQL("create table " + USERS_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, firstName TEXT, lastName TEXT, dob DATE, bio TEXT)");
-        db.execSQL("create table " + LIKES_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER)");
-        // STUBS
-        // addStubs();
+        db.execSQL("create table " + LIKES_TABLE_NAME + " (userId INTEGER, storyId INTEGER)");
     }
 
     @Override
@@ -45,17 +48,106 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + STORY_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + POST_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + SETTINGS_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + LIKES_TABLE_NAME);
         onCreate(db);
     }
 
     public void addStubs() {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        // First we add users
 
-        cv.put("storyId",1);
-        cv.put("userId",1);
-        long result = db.insert(STORY_TABLE_NAME, null, cv);
+        Cursor res = db.rawQuery("select userId from " + USERS_TABLE_NAME + " WHERE userId = 2", null);
+        if (res.getCount() > 0) {
+            return;
+        }
+
+        // First we add users
+        ContentValues cv = new ContentValues();
+        cv.put("userId",2);
+        cv.put("email","nirtz89@gmail.com");
+        cv.put("password","123");
+        cv.put("firstName","Nir");
+        cv.put("lastName","Tzezana");
+        db.insert(USERS_TABLE_NAME, null, cv);
+
+        cv = new ContentValues();
+        cv.put("userId",3);
+        cv.put("email","roy.b.samuel@gmail.com");
+        cv.put("password","123");
+        cv.put("firstName","Roy");
+        cv.put("lastName","Samuel");
+        db.insert(USERS_TABLE_NAME, null, cv);
+
+        cv = new ContentValues();
+        cv.put("userId",4);
+        cv.put("email","yakirsieg@gmail.com");
+        cv.put("password","123");
+        cv.put("firstName","Yakir");
+        cv.put("lastName","Sieglman");
+        db.insert(USERS_TABLE_NAME, null, cv);
+
+        cv = new ContentValues();
+        cv.put("userId",5);
+        cv.put("email","morad@gmail.com");
+        cv.put("password","123");
+        cv.put("firstName","Morad");
+        cv.put("lastName","Badarna");
+        db.insert(USERS_TABLE_NAME, null, cv);
+
+        cv = new ContentValues();
+        cv.put("userId",6);
+        cv.put("email","allan.hartman@gmail.com");
+        cv.put("password","123");
+        cv.put("firstName","Allen");
+        cv.put("lastName","Hartman");
+        db.insert(USERS_TABLE_NAME, null, cv);
+
+        // Now we add stories and posts
+        ArrayList<String> descs = new ArrayList<>();
+        ArrayList<Bitmap> imgs = new ArrayList<>();
+        descs.add("Ocean");
+        descs.add("Another ocean");
+        descs.add("Wow this is the most beautiful ocean I ever saw");
+        imgs.add(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.ocean_1));
+        imgs.add(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.ocean_2));
+        imgs.add(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.ocean_3));
+        addStoryAndPostStub(ctx.getResources(),2, descs, imgs);
+
+        descs = new ArrayList<>();
+        imgs = new ArrayList<>();
+        descs.add("I love cars!");
+        descs.add("This one is amazing");
+        descs.add("Can't ignore this one");
+        imgs.add(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.car_2));
+        imgs.add(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.car_3));
+        imgs.add(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.car_1));
+        addStoryAndPostStub(ctx.getResources(),3, descs, imgs);
+
+        descs = new ArrayList<>();
+        imgs = new ArrayList<>();
+        descs.add("\uD83D\uDC36 Dogs \uD83D\uDC36");
+        descs.add("Can't get enough of them");
+        descs.add("Love them all!");
+        imgs.add(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.dog_2));
+        imgs.add(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.dog_1));
+        imgs.add(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.dog_3));
+        addStoryAndPostStub(ctx.getResources(),3, descs, imgs);
+
+        // Finally, we add likes
+        addLikeFromSpecificUser(1,2);
+        addLikeFromSpecificUser(1,3);
+        addLikeFromSpecificUser(1,6);
+        addLikeFromSpecificUser(2,2);
+        addLikeFromSpecificUser(3,5);
+        addLikeFromSpecificUser(3,2);
+        addLikeFromSpecificUser(3,4);
+        addLikeFromSpecificUser(3,5);
+        addLikeFromSpecificUser(3,6);
+
+
+        Intent myIntent = new Intent(ctx, Login.class);
+        myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        ctx.startActivity(myIntent);
     }
 
     public boolean insertData(int storyId, int userId) {
@@ -168,58 +260,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return resultPost>-1;
     }
 
-    public Boolean addPostStub(Resources rcs, int storyId) {
+    public Boolean addPostStub(Resources rcs, int storyId, String description, Bitmap image) {
         SQLiteDatabase db = this.getWritableDatabase();
         int lastPostRecord = this.getLastPostId();
         ContentValues cvPost = new ContentValues();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        Random rand = new Random();
-        int n = rand.nextInt(3) + 1;
+        Bitmap myImage = image;
 
-        Bitmap myImage;
-
-        switch (n) {
-            case 1:
-                myImage = BitmapFactory.decodeResource(rcs, R.drawable.dog2);
-                break;
-            case 2:
-                myImage = BitmapFactory.decodeResource(rcs, R.drawable.cat2);
-                break;
-            default:
-                myImage = BitmapFactory.decodeResource(rcs, R.drawable.pancakes2);
-                break;
-        }
-
-        myImage.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        myImage.compress(Bitmap.CompressFormat.JPEG, 25, baos);
         byte[] photo = baos.toByteArray();
 
         cvPost.put("postId",lastPostRecord+1);
         cvPost.put("storyId",storyId);
         cvPost.put("img",photo);
-        cvPost.put("description","A string");
+        cvPost.put("description",description);
 
         long resultPost = db.insert(POST_TABLE_NAME, null, cvPost);
         return resultPost>0;
 
     }
 
-    public Boolean addStoryAndPostStub(Resources rcs) {
+    public Boolean addStoryAndPostStub(Resources rcs, int userId, ArrayList<String> descriptions, ArrayList<Bitmap> images) {
         SQLiteDatabase db = this.getWritableDatabase();
         int lastStoryRecord = this.getLastStoryId();
         ContentValues cvStory = new ContentValues();
 
         cvStory.put("storyId",lastStoryRecord+1);
-        cvStory.put("userId",1);
-
-        Random rand = new Random();
-        int num_posts = rand.nextInt(3) + 1;
+        cvStory.put("userId",userId);
 
         long resultStory = db.insert(STORY_TABLE_NAME, null, cvStory);
         if (resultStory>0) {
-            for (int i = 0; i < num_posts; i++) {
-                this.addPostStub(rcs, lastStoryRecord + 1);
+            for (int i = 0; i < 3; i++) {
+                this.addPostStub(rcs, lastStoryRecord + 1, descriptions.get(i), images.get(i));
             }
             return true;
         }
@@ -276,7 +350,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public User getUserById(int userId) {
         User user = null;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + SETTINGS_TABLE_NAME, null);
+        Cursor res = db.rawQuery("select * from " + USERS_TABLE_NAME + " where userId = " + userId, null);
         if (res.getCount() > 0) {
             while (res.moveToNext()) {
                 user = new User(res.getInt(0),res.getString(1),res.getString(3),res.getString(4),res.getString(6),res.getString(5));
@@ -415,7 +489,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             long resultPost = db.update(SETTINGS_TABLE_NAME, cv, null,null);
             return resultPost>0;
         }
-            long resultPost = db.insert(SETTINGS_TABLE_NAME, null,cv);
+        long resultPost = db.insert(SETTINGS_TABLE_NAME, null,cv);
         return resultPost>0;
     }
 
@@ -426,11 +500,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + SETTINGS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + LIKES_TABLE_NAME);
-        db.execSQL("create table " + STORY_TABLE_NAME + " (storyId INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, userName TEXT, likes INTEGER)");
-        db.execSQL("create table " + POST_TABLE_NAME + " (postId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER, img BLOB, description TEXT)");
-        db.execSQL("create table " + SETTINGS_TABLE_NAME + " (userId INTEGER PRIMARY KEY)");
-        db.execSQL("create table " + USERS_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, firstName TEXT, lastName TEXT, dob DATE, bio TEXT)");
-        db.execSQL("create table " + LIKES_TABLE_NAME + " (userId INTEGER PRIMARY KEY AUTOINCREMENT, storyId INTEGER)");
+        this.onCreate(db);
         return true;
     }
 
@@ -523,6 +593,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         int userId = getUserIdFromSettings();
+        cv.put("storyId",storyId);
+        cv.put("userId",userId);
+        long result = db.insert(LIKES_TABLE_NAME, null, cv);
+        return result>0;
+    }
+
+    public Boolean addLikeFromSpecificUser(int storyId, int userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
         cv.put("storyId",storyId);
         cv.put("userId",userId);
         long result = db.insert(LIKES_TABLE_NAME, null, cv);

@@ -40,7 +40,6 @@ public class AddStoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_story);
 
         Intent intent = new Intent();
-        intent.putExtra("editTextValue", "value_here");
         setResult(RESULT_OK, intent);
 
         myDb = new DatabaseHelper(this);

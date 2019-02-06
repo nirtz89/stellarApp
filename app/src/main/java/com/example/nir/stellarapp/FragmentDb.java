@@ -86,13 +86,13 @@ public class FragmentDb extends Fragment {
         addStoryAndPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseHelper myDb = new DatabaseHelper(ctx);
-                if (myDb.addStoryAndPostStub(ctx.getResources())) {
-                    Toast.makeText(ctx, "Success, story and post added.", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(ctx, "ERROR", Toast.LENGTH_SHORT).show();
-                }
+//                DatabaseHelper myDb = new DatabaseHelper(ctx);
+//                if (myDb.addStoryAndPostStub(ctx.getResources())) {
+//                    Toast.makeText(ctx, "Success, story and post added.", Toast.LENGTH_SHORT).show();
+//                }
+//                else {
+//                    Toast.makeText(ctx, "ERROR", Toast.LENGTH_SHORT).show();
+//                }
 
             }
         });

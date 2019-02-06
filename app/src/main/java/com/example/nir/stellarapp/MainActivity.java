@@ -1,5 +1,7 @@
 package com.example.nir.stellarapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     DatabaseHelper myDb;
 
-//Roy Comment
+    //Roy Comment
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                     viewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_db:
-                    viewPager.setCurrentItem(3);
+                    viewPager.setCurrentItem(2);
                     return true;
             }
             return false;
@@ -70,10 +72,20 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
             case R.id.about:
-                Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
+
+                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                alertDialog.setTitle("About Stellar");
+                alertDialog.setMessage("Created by Roy Samuel (038067138) and Nir Tzezana (201524006)\nFor Android Course at the University of Haifa, all rights reserved.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK. GREAT WORK GUYS.",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
                 return true;
-            case R.id.db:
-                viewPager.setCurrentItem(2);
+            case R.id.refresh:
+                setupViewPager(viewPager);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -88,7 +100,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         myDb = new DatabaseHelper(this);
 
-        myDb.removeAllTables();
+        // myDb.removeAllTables();
+        myDb.addStubs();
 
         if (!myDb.isUserLoggedIn()) {
             Intent myIntent = new Intent(MainActivity.this, Login.class);
@@ -131,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         StatePagerAdapter adapter = new StatePagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new FragmentStories(), "Stories");
         adapter.addFragment(new FragmentUser(), "User");
-        adapter.addFragment(new FragmentDb(), "DB");
+//        adapter.addFragment(new FragmentDb(), "DB");
         adapter.addFragment(new FragmentSearch(), "Search");
         viewPager.setAdapter(adapter);
     }
